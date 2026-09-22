@@ -8,7 +8,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - run: make test
 
   compatibility:
@@ -18,7 +18,7 @@ jobs:
       matrix:
         postgres: [14, 15, 16, 17, 18]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: PostgreSQL ${{ matrix.postgres }}
         run: |
           docker run --rm \
@@ -47,7 +47,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - id: version
         run: |
           version=$(sed -n "s/default_version = '\(.*\)'/\1/p" pg_prompt_jev.control)
