@@ -1,4 +1,4 @@
 comment = 'Typed Jev decisions from PostgreSQL'
-default_version = '0.1.0'
+default_version = '0.1.1'
 requires = 'plpython3u'
 relocatable = true

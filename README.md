@@ -53,7 +53,9 @@ GRANT EXECUTE ON FUNCTION prompt_jev(text, text, jsonb, jsonb, jsonb, jsonb)
 TO app_user;
 ```
 
-The extension revokes public execution because inputs leave the database.
+The extension revokes public execution because inputs leave the database. The
+function keeps its six-argument signature and is `VOLATILE`, `PARALLEL UNSAFE`,
+security invoker, and not `STRICT`.
 
 ## Configure
 
@@ -61,9 +63,9 @@ Set these variables in the PostgreSQL server environment, then restart it:
 
 | Provider | Variables |
 | --- | --- |
-| TypeSafe, default | `TYPESAFE_API_KEY` |
-| Vercel AI Gateway | `PROMPT_JEV_PROVIDER=vercel`, `AI_GATEWAY_API_KEY` |
-| Cloudflare AI Gateway | `PROMPT_JEV_PROVIDER=cloudflare`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_AI_GATEWAY_ID` |
+| TypeSafe, default | `TYPESAFE_API_KEY`, optional `TYPESAFE_DEFAULT_MODEL` |
+| Vercel AI Gateway | `PROMPT_JEV_PROVIDER=vercel`, `AI_GATEWAY_API_KEY`, optional `VERCEL_JEV_MODEL` |
+| Cloudflare AI Gateway | `PROMPT_JEV_PROVIDER=cloudflare`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, optional `CLOUDFLARE_AI_GATEWAY_ID` and `CLOUDFLARE_JEV_MODEL` |
 
 For local testing, use session settings:
 
@@ -72,7 +74,10 @@ SET jev.provider = 'vercel';
 SET jev.api_key = 'your-key';
 ```
 
-Do not persist API keys with `ALTER SYSTEM`.
+Do not persist API keys with `ALTER SYSTEM`. Server environment values take
+precedence over session settings. See [configuration](docs/configuration.md),
+[resource limits](docs/limits.md), [errors](docs/errors.md), and
+[security](SECURITY.md).
 
 ## More examples
 
@@ -101,21 +106,34 @@ SELECT prompt_jev(
 );
 ```
 
-`NULL` input returns `NULL` without making a request. PostgreSQL requires a
-fixed function return type, so every mode returns `jsonb`. Calls are not
-batched; store results if they will be reused.
+`NULL` input returns `NULL` without validating other arguments or making a
+request. PostgreSQL requires a fixed function return type, so every mode returns
+`jsonb`. Successful output shapes remain answer-only.
+
+Each non-NULL call performs external work inside the current statement. A
+rollback cannot retract sent data or provider cost, and `EXPLAIN ANALYZE` can
+make requests. Calls are not batched across rows. Prefer one multi-question call
+for the same input, bound candidate rows before evaluation, and store results
+that will be reused. See [operations](docs/operations.md).
 
 ## Test
 
 ```sh
-make test
+make test         # deterministic unit and loopback transport tests
+make integration  # installed artifact in real PostgreSQL 18 via Docker
 ```
+
+CI runs the integration runner against PostgreSQL 14 through 18. Ordinary tests
+use only synthetic loopback providers.
 
 ## Release
 
-Update `default_version` in `pg_prompt_jev.control`, the `DATA` path in the
-`Makefile`, and add the matching versioned SQL file. A successful push or merge
-to `main` creates the tag, GitHub release, and source archive.
+Released SQL files are immutable. Update `src/pg_prompt_jev.py`, add the next
+base and upgrade targets in `tools/generate_sql.py`, run the generator, update
+`default_version`, and test fresh install, upgrade, archive install, privileges,
+and dump/restore. A successful tested push or merge to `main` creates a new tag,
+GitHub release, and source archive only when that version and tag do not already
+exist.
 
 ## License
 

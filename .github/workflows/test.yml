@@ -4,45 +4,29 @@ on:
   push:
   pull_request:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   test:
     runs-on: ubuntu-24.04
+    timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
       - run: make test
 
   compatibility:
     runs-on: ubuntu-24.04
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
         postgres: [14, 15, 16, 17, 18]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
       - name: PostgreSQL ${{ matrix.postgres }}
-        run: |
-          docker run --rm \
-            -e POSTGRES_PASSWORD=test \
-            -v "$PWD:/src:ro" \
-            postgres:${{ matrix.postgres }} sh -euxc '
-              apt-get update -qq
-              DEBIAN_FRONTEND=noninteractive apt-get install -y -qq \
-                "postgresql-plpython3-$PG_MAJOR" >/dev/null
-              extension_dir="$(pg_config --sharedir)/extension"
-              cp /src/pg_prompt_jev.control "$extension_dir/"
-              cp /src/sql/pg_prompt_jev--*.sql "$extension_dir/"
-              docker-entrypoint.sh postgres >/tmp/postgres.log 2>&1 &
-              for _ in $(seq 1 30); do
-                if grep -q "PostgreSQL init process complete" /tmp/postgres.log && \
-                  pg_isready -U postgres; then
-                  break
-                fi
-                sleep 1
-              done
-              grep -q "PostgreSQL init process complete" /tmp/postgres.log
-              pg_isready -U postgres
-              psql -v ON_ERROR_STOP=1 -U postgres -f /src/test/smoke.sql
-            '
+        run: python3 test/integration/run.py --image postgres:${{ matrix.postgres }}
 
   release:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -51,25 +35,34 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
       - id: version
         run: |
           version=$(sed -n "s/default_version = '\(.*\)'/\1/p" pg_prompt_jev.control)
           test -n "$version"
           test -f "sql/pg_prompt_jev--$version.sql"
-          grep -Fx "DATA = sql/pg_prompt_jev--$version.sql" Makefile
+          python3 tools/generate_sql.py --check
           echo "version=$version" >> "$GITHUB_OUTPUT"
       - name: Release new version
         env:
           GH_TOKEN: ${{ github.token }}
           VERSION: ${{ steps.version.outputs.version }}
         run: |
-          if gh release view "v$VERSION" >/dev/null 2>&1; then
+          error=$(mktemp)
+          if gh api "repos/$GITHUB_REPOSITORY/releases/tags/v$VERSION" \
+            >/dev/null 2>"$error"; then
             echo "v$VERSION is already released"
             exit 0
+          elif ! grep -q 'HTTP 404' "$error"; then
+            cat "$error" >&2
+            exit 1
+          fi
+          if git ls-remote --exit-code --tags origin "refs/tags/v$VERSION" >/dev/null; then
+            echo "tag v$VERSION exists without a matching release; refusing to move it" >&2
+            exit 1
           fi
           archive="pg-jev-$VERSION.tar.gz"
-          git archive --prefix="pg-jev-$VERSION/" -o "$archive" HEAD
+          git archive --prefix="pg-jev-$VERSION/" -o "$archive" "$GITHUB_SHA"
           gh release create "v$VERSION" "$archive" \
             --target "$GITHUB_SHA" \
             --title "pg-jev $VERSION" \

@@ -1,0 +1,100 @@
+{
+  "commit": "ef2bfdc01d08758bb780c313ed4c684e21ff7b90",
+  "generated_at": "2026-09-22T12:11:04Z",
+  "environment": {
+    "postgres": "18.6 (Debian 18.6-1.pgdg13+2)",
+    "python": "3.13.5",
+    "os": "Linux-7.0.14-orbstack-00380-ga7e0a2dc9535-aarch64-with-glibc2.41",
+    "cpu_count": 12,
+    "backend_rss_kib_after": 94340,
+    "tls": "not measured",
+    "normalization_only": "not measured independently"
+  },
+  "scenarios": [
+    {
+      "name": "cold-c1-1k-1q",
+      "clients": 1,
+      "transactions": 1,
+      "input_kib": 1,
+      "questions": 1,
+      "delay": 0,
+      "elapsed_seconds": 0.04062986999633722,
+      "throughput_tps": 24.61243415472779,
+      "errors": 0,
+      "requests": 1,
+      "tcp_connections": 1,
+      "latency_ms": {
+        "p50": 28.935,
+        "p95": 28.935,
+        "p99": 28.935,
+        "mean": 28.935
+      },
+      "pgbench_output": "pgbench (18.6 (Debian 18.6-1.pgdg13+2))\ntransaction type: /tmp/tmp8mva73d6.sql\nscaling factor: 1\nquery mode: simple\nnumber of clients: 1\nnumber of threads: 1\nmaximum number of tries: 1\nnumber of transactions per client: 1\nnumber of transactions actually processed: 1/1\nnumber of failed transactions: 0 (0.000%)\nlatency average = 28.976 ms\ninitial connection time = 0.780 ms\ntps = 34.511320 (without initial connection time)\n"
+    },
+    {
+      "name": "warm-c1-1k-1q",
+      "clients": 1,
+      "transactions": 10,
+      "input_kib": 1,
+      "questions": 1,
+      "delay": 0,
+      "elapsed_seconds": 0.44441493500198703,
+      "throughput_tps": 22.501494014721374,
+      "errors": 0,
+      "requests": 10,
+      "tcp_connections": 1,
+      "latency_ms": {
+        "p50": 44.075,
+        "p95": 44.947,
+        "p99": 44.947,
+        "mean": 42.6335
+      },
+      "pgbench_output": "pgbench (18.6 (Debian 18.6-1.pgdg13+2))\ntransaction type: /tmp/tmp4xvfnmf8.sql\nscaling factor: 1\nquery mode: simple\nnumber of clients: 1\nnumber of threads: 1\nmaximum number of tries: 1\nnumber of transactions per client: 10\nnumber of transactions actually processed: 10/10\nnumber of failed transactions: 0 (0.000%)\nlatency average = 42.674 ms\ninitial connection time = 1.186 ms\ntps = 23.433637 (without initial connection time)\n"
+    },
+    {
+      "name": "warm-c16-1k-1q",
+      "clients": 16,
+      "transactions": 80,
+      "input_kib": 1,
+      "questions": 1,
+      "delay": 0,
+      "elapsed_seconds": 0.2842400100053055,
+      "throughput_tps": 281.4522839290174,
+      "errors": 0,
+      "requests": 80,
+      "tcp_connections": 16,
+      "latency_ms": {
+        "p50": 42.786,
+        "p95": 58.149,
+        "p99": 68.215,
+        "mean": 44.5342125
+      },
+      "pgbench_output": "pgbench (18.6 (Debian 18.6-1.pgdg13+2))\ntransaction type: /tmp/tmp01ipr6a1.sql\nscaling factor: 1\nquery mode: simple\nnumber of clients: 16\nnumber of threads: 8\nmaximum number of tries: 1\nnumber of transactions per client: 5\nnumber of transactions actually processed: 80/80\nnumber of failed transactions: 0 (0.000%)\nlatency average = 48.319 ms\ninitial connection time = 9.804 ms\ntps = 331.131310 (without initial connection time)\n"
+    },
+    {
+      "name": "delay-c1-1k-1q",
+      "clients": 1,
+      "transactions": 5,
+      "input_kib": 1,
+      "questions": 1,
+      "delay": 0.01,
+      "elapsed_seconds": 0.2927849870029604,
+      "throughput_tps": 17.077378355979175,
+      "errors": 0,
+      "requests": 5,
+      "tcp_connections": 1,
+      "latency_ms": {
+        "p50": 55.074,
+        "p95": 55.766,
+        "p99": 55.766,
+        "mean": 53.059799999999996
+      },
+      "pgbench_output": "pgbench (18.6 (Debian 18.6-1.pgdg13+2))\ntransaction type: /tmp/tmp9rt1fz9z.sql\nscaling factor: 1\nquery mode: simple\nnumber of clients: 1\nnumber of threads: 1\nmaximum number of tries: 1\nnumber of transactions per client: 5\nnumber of transactions actually processed: 5/5\nnumber of failed transactions: 0 (0.000%)\nlatency average = 53.097 ms\ninitial connection time = 1.379 ms\ntps = 18.833314 (without initial connection time)\n"
+    }
+  ],
+  "scalar_vs_multi_question": {
+    "scalar_requests": 3,
+    "multi_question_requests": 1,
+    "equivalent": true
+  }
+}

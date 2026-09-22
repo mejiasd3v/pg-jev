@@ -1,0 +1,100 @@
+{
+  "commit": "ef2bfdc01d08758bb780c313ed4c684e21ff7b90",
+  "generated_at": "2026-09-22T12:04:23Z",
+  "environment": {
+    "postgres": "18.6 (Debian 18.6-1.pgdg13+2)",
+    "python": "3.13.5",
+    "os": "Linux-7.0.14-orbstack-00380-ga7e0a2dc9535-aarch64-with-glibc2.41",
+    "cpu_count": 12,
+    "backend_rss_kib_after": 94276,
+    "tls": "not measured",
+    "normalization_only": "not measured independently"
+  },
+  "scenarios": [
+    {
+      "name": "cold-c1-1k-1q",
+      "clients": 1,
+      "transactions": 1,
+      "input_kib": 1,
+      "questions": 1,
+      "delay": 0,
+      "elapsed_seconds": 0.05516662799345795,
+      "throughput_tps": 18.126900924932137,
+      "errors": 0,
+      "requests": 1,
+      "tcp_connections": 1,
+      "latency_ms": {
+        "p50": 41.491,
+        "p95": 41.491,
+        "p99": 41.491,
+        "mean": 41.491
+      },
+      "pgbench_output": "pgbench (18.6 (Debian 18.6-1.pgdg13+2))\ntransaction type: /tmp/tmp3pn3olr6.sql\nscaling factor: 1\nquery mode: simple\nnumber of clients: 1\nnumber of threads: 1\nmaximum number of tries: 1\nnumber of transactions per client: 1\nnumber of transactions actually processed: 1/1\nnumber of failed transactions: 0 (0.000%)\nlatency average = 41.534 ms\ninitial connection time = 1.400 ms\ntps = 24.076660 (without initial connection time)\n"
+    },
+    {
+      "name": "warm-c1-1k-1q",
+      "clients": 1,
+      "transactions": 10,
+      "input_kib": 1,
+      "questions": 1,
+      "delay": 0,
+      "elapsed_seconds": 0.1016959310072707,
+      "throughput_tps": 98.33235116639086,
+      "errors": 0,
+      "requests": 10,
+      "tcp_connections": 10,
+      "latency_ms": {
+        "p50": 5.633,
+        "p95": 5.875,
+        "p99": 5.875,
+        "mean": 8.5596
+      },
+      "pgbench_output": "pgbench (18.6 (Debian 18.6-1.pgdg13+2))\ntransaction type: /tmp/tmp434srvl7.sql\nscaling factor: 1\nquery mode: simple\nnumber of clients: 1\nnumber of threads: 1\nmaximum number of tries: 1\nnumber of transactions per client: 10\nnumber of transactions actually processed: 10/10\nnumber of failed transactions: 0 (0.000%)\nlatency average = 8.701 ms\ninitial connection time = 0.868 ms\ntps = 114.934602 (without initial connection time)\n"
+    },
+    {
+      "name": "warm-c16-1k-1q",
+      "clients": 16,
+      "transactions": 80,
+      "input_kib": 1,
+      "questions": 1,
+      "delay": 0,
+      "elapsed_seconds": 0.13851152898860164,
+      "throughput_tps": 577.5692506187218,
+      "errors": 0,
+      "requests": 80,
+      "tcp_connections": 80,
+      "latency_ms": {
+        "p50": 6.896,
+        "p95": 89.53,
+        "p99": 100.388,
+        "mean": 20.0852875
+      },
+      "pgbench_output": "pgbench (18.6 (Debian 18.6-1.pgdg13+2))\ntransaction type: /tmp/tmpp5uiloec.sql\nscaling factor: 1\nquery mode: simple\nnumber of clients: 16\nnumber of threads: 8\nmaximum number of tries: 1\nnumber of transactions per client: 5\nnumber of transactions actually processed: 80/80\nnumber of failed transactions: 0 (0.000%)\nlatency average = 24.376 ms\ninitial connection time = 3.773 ms\ntps = 656.394099 (without initial connection time)\n"
+    },
+    {
+      "name": "delay-c1-1k-1q",
+      "clients": 1,
+      "transactions": 5,
+      "input_kib": 1,
+      "questions": 1,
+      "delay": 0.01,
+      "elapsed_seconds": 0.12358638900332153,
+      "throughput_tps": 40.457529670727894,
+      "errors": 0,
+      "requests": 5,
+      "tcp_connections": 5,
+      "latency_ms": {
+        "p50": 16.901,
+        "p95": 17.591,
+        "p99": 17.591,
+        "mean": 22.098
+      },
+      "pgbench_output": "pgbench (18.6 (Debian 18.6-1.pgdg13+2))\ntransaction type: /tmp/tmpglot7kgd.sql\nscaling factor: 1\nquery mode: simple\nnumber of clients: 1\nnumber of threads: 1\nmaximum number of tries: 1\nnumber of transactions per client: 5\nnumber of transactions actually processed: 5/5\nnumber of failed transactions: 0 (0.000%)\nlatency average = 22.112 ms\ninitial connection time = 0.809 ms\ntps = 45.225131 (without initial connection time)\n"
+    }
+  ],
+  "scalar_vs_multi_question": {
+    "scalar_requests": 3,
+    "multi_question_requests": 1,
+    "equivalent": true
+  }
+}
