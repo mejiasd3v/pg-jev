@@ -38,7 +38,8 @@ SELECT prompt_jev(
 
 ## Install
 
-Requires PostgreSQL with `plpython3u` and outbound HTTPS access.
+Requires PostgreSQL with `plpython3u` and outbound HTTPS access. CI tests
+PostgreSQL 14 through 18.
 
 ```sh
 make
