@@ -110,6 +110,12 @@ batched; store results if they will be reused.
 make test
 ```
 
+## Release
+
+Update `default_version` in `pg_prompt_jev.control`, the `DATA` path in the
+`Makefile`, and add the matching versioned SQL file. A successful push or merge
+to `main` creates the tag, GitHub release, and source archive.
+
 ## License
 
 [MIT](LICENSE)

@@ -10,3 +10,34 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: make test
+
+  release:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - id: version
+        run: |
+          version=$(sed -n "s/default_version = '\(.*\)'/\1/p" pg_prompt_jev.control)
+          test -n "$version"
+          test -f "sql/pg_prompt_jev--$version.sql"
+          grep -Fx "DATA = sql/pg_prompt_jev--$version.sql" Makefile
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      - name: Release new version
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          if gh release view "v$VERSION" >/dev/null 2>&1; then
+            echo "v$VERSION is already released"
+            exit 0
+          fi
+          archive="pg-jev-$VERSION.tar.gz"
+          git archive --prefix="pg-jev-$VERSION/" -o "$archive" HEAD
+          gh release create "v$VERSION" "$archive" \
+            --target "$GITHUB_SHA" \
+            --title "pg-jev $VERSION" \
+            --generate-notes
