@@ -33,9 +33,13 @@ jobs:
               cp /src/sql/pg_prompt_jev--*.sql "$extension_dir/"
               docker-entrypoint.sh postgres >/tmp/postgres.log 2>&1 &
               for _ in $(seq 1 30); do
-                pg_isready -U postgres && break
+                if grep -q "PostgreSQL init process complete" /tmp/postgres.log && \
+                  pg_isready -U postgres; then
+                  break
+                fi
                 sleep 1
               done
+              grep -q "PostgreSQL init process complete" /tmp/postgres.log
               pg_isready -U postgres
               psql -v ON_ERROR_STOP=1 -U postgres -f /src/test/smoke.sql
             '
