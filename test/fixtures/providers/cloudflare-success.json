@@ -1,0 +1,8 @@
+{
+  "_source": "https://developers.cloudflare.com/ai/models/typesafe/jev/",
+  "model": "jev-1.13.0",
+  "answers": {
+    "answer": {"type": "noul", "noul": 0.75}
+  },
+  "usage": {"input_tokens": 10, "output_tokens": 2}
+}

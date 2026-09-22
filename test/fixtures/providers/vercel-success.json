@@ -1,0 +1,8 @@
+{
+  "_source": "https://vercel.com/docs/ai-gateway/sdks-and-apis/typesafe",
+  "model": "typesafe-ai/jev",
+  "answers": {
+    "answer": {"type": "noul", "noul": 0.75}
+  },
+  "usage": {"input_tokens": 10, "output_tokens": 2}
+}
